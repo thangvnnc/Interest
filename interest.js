@@ -73,13 +73,18 @@ app.post('/api/admod', function (req, res) {
         if (error) throw error;
 
         if(results.length == 0) {
-            connection.query('INSERT INTO admod SET ?', {device_id: deviceId}, function (error, results, fields) {
+            connection.query('INSERT INTO admod SET ?', {device_id: deviceId, count: 1}, function (error, results, fields) {
                 if (error) throw error;
                 res.send({code: 0, message: "Thành công"});
             });
         }
         else {
-            res.send({code: 0, message: "Thành công"});
+            let count = results[0].count;
+            count++;
+            connection.query('UPDATE admod SET ? WHERE ?', [{count: count}, {device_id: deviceId}], function (error, results, fields) {
+                if (error) throw error;
+                res.send({code: 0, message: "Thành công"});
+            });
         }
     });
 });
