@@ -52,7 +52,6 @@ app.post('/api/device/android', function (req, res) {
         if(results.length == 0) {
             connection.query('INSERT INTO device SET ?', {android_id: androidId}, function (error, results, fields) {
                 if (error) throw error;
-                console.log("insert support id: " + results.insertId);
                 res.send({code: 0, message: "Thành công"});
             });
         }
@@ -60,11 +59,29 @@ app.post('/api/device/android', function (req, res) {
             res.send({code: 0, message: "Thành công"});
         }
     });
-    // connection.query('INSERT INTO device SET ?', {android_id: androidId}, function (error, results, fields) {
-    //     if (error) throw error;
-    //     console.log("insert support id: " + results.insertId);
-    //     res.send({code: 0, message: "Thành công"});
-    // });
+});
+
+app.post('/api/admod', function (req, res) {
+    let request = req.body;
+    let deviceId = request.deviceId;
+    if(deviceId === undefined || deviceId === null) {
+        res.send({code: 1, message: "Vui lòng truyền đủ prameters"});
+        return;
+    }
+
+    connection.query('SELECT * FROM admod WHERE ?', {device_id: deviceId}, function (error, results, fields) {
+        if (error) throw error;
+
+        if(results.length == 0) {
+            connection.query('INSERT INTO admod SET ?', {device_id: deviceId}, function (error, results, fields) {
+                if (error) throw error;
+                res.send({code: 0, message: "Thành công"});
+            });
+        }
+        else {
+            res.send({code: 0, message: "Thành công"});
+        }
+    });
 });
 
 app.listen(port, function (error) {
