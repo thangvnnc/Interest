@@ -5,10 +5,10 @@ const bodyParser = require('body-parser');
 
 const mysql      = require('mysql');
 const connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'tinhlaisuat',
-    password : 'thang01652608118',
-    database : 'zadmin_tinhlaisuat'
+    host     : 'xxx',
+    user     : 'xxx',
+    password : 'xxx',
+    database : 'xxx'
 });
 
 connection.connect(function (err) {
@@ -36,6 +36,35 @@ app.post('/api/support', function (req, res) {
         console.log("insert support id: " + results.insertId);
         res.send({code: 0, message: "Thành công"});
     });
+});
+
+app.post('/api/device/android', function (req, res) {
+    let request = req.body;
+    let androidId = request.androidId;
+    if(androidId === undefined || androidId === null) {
+        res.send({code: 1, message: "Vui lòng truyền đủ prameters"});
+        return;
+    }
+
+    connection.query('SELECT * FROM device WHERE ?', {android_id: androidId}, function (error, results, fields) {
+        if (error) throw error;
+
+        if(results.length == 0) {
+            connection.query('INSERT INTO device SET ?', {android_id: androidId}, function (error, results, fields) {
+                if (error) throw error;
+                console.log("insert support id: " + results.insertId);
+                res.send({code: 0, message: "Thành công"});
+            });
+        }
+        else {
+            res.send({code: 0, message: "Thành công"});
+        }
+    });
+    // connection.query('INSERT INTO device SET ?', {android_id: androidId}, function (error, results, fields) {
+    //     if (error) throw error;
+    //     console.log("insert support id: " + results.insertId);
+    //     res.send({code: 0, message: "Thành công"});
+    // });
 });
 
 app.listen(port, function (error) {
