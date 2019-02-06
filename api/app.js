@@ -1,48 +1,27 @@
+'use strict';
 const express = require('express');
-const app = express();
-const port = 8118;
-const bodyParser = require('body-parser');
+const router        = express.Router();
+const connection = require('./database');
 
-const mysql      = require('mysql');
-const connection = mysql.createConnection({
-    host     : 'xxx',
-    user     : 'xxx',
-    password : 'xxx',
-    database : 'xxx'
-});
-
-connection.connect(function (err) {
-    if (err) {
-        console.log("Connect database failed");
-        return;
-    }
-    console.log('connected as id ' + connection.threadId);
-});
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.static(__dirname + '/public'));
-
-app.post('/api/support', function (req, res) {
+router.post('/support', function (req, res) {
     let request = req.body;
     let content = request.content;
     if(content === undefined || content === null) {
-        res.send({code: 1, message: "Vui lòng truyền đủ prameters"});
+        res.send({code: 1, message: 'Vui lòng truyền đủ prameters'});
         return;
     }
 
     connection.query('INSERT INTO support SET ?', {content: content}, function (error, results, fields) {
         if (error) throw error;
-        console.log("insert support id: " + results.insertId);
-        res.send({code: 0, message: "Thành công"});
+        res.send({code: 0, message: 'Thành công'});
     });
 });
 
-app.post('/api/device/android', function (req, res) {
+router.post('/device/android', function (req, res) {
     let request = req.body;
     let androidId = request.androidId;
     if(androidId === undefined || androidId === null) {
-        res.send({code: 1, message: "Vui lòng truyền đủ prameters"});
+        res.send({code: 1, message: 'Vui lòng truyền đủ prameters'});
         return;
     }
 
@@ -52,20 +31,20 @@ app.post('/api/device/android', function (req, res) {
         if(results.length == 0) {
             connection.query('INSERT INTO device SET ?', {android_id: androidId}, function (error, results, fields) {
                 if (error) throw error;
-                res.send({code: 0, message: "Thành công"});
+                res.send({code: 0, message: 'Thành công'});
             });
         }
         else {
-            res.send({code: 0, message: "Thành công"});
+            res.send({code: 0, message: 'Thành công'});
         }
     });
 });
 
-app.post('/api/admod', function (req, res) {
+router.post('/admod', function (req, res) {
     let request = req.body;
     let deviceId = request.deviceId;
     if(deviceId === undefined || deviceId === null) {
-        res.send({code: 1, message: "Vui lòng truyền đủ prameters"});
+        res.send({code: 1, message: 'Vui lòng truyền đủ prameters'});
         return;
     }
 
@@ -75,7 +54,7 @@ app.post('/api/admod', function (req, res) {
         if(results.length == 0) {
             connection.query('INSERT INTO admod SET ?', {device_id: deviceId, count: 1}, function (error, results, fields) {
                 if (error) throw error;
-                res.send({code: 0, message: "Thành công"});
+                res.send({code: 0, message: 'Thành công'});
             });
         }
         else {
@@ -83,16 +62,10 @@ app.post('/api/admod', function (req, res) {
             count++;
             connection.query('UPDATE admod SET ? WHERE ?', [{count: count}, {device_id: deviceId}], function (error, results, fields) {
                 if (error) throw error;
-                res.send({code: 0, message: "Thành công"});
+                res.send({code: 0, message: 'Thành công'});
             });
         }
     });
 });
 
-app.listen(port, function (error) {
-    if (error) {
-        console.log(error);
-        return;
-    }
-    console.log("server start : " + port);
-});
+module.exports = router;
