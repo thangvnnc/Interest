@@ -21,7 +21,7 @@ router.post('/register', function (req, res) {
     }
 
     connection.query('SELECT * FROM users WHERE ?', {username: username}, function (error, results, fields) {
-        if (error) throw error;
+        if (error) { res.send(err.UNKNOWN); return;};
 
         if (results.length !== 0) {
             res.send({code: 2, message: 'Tài khoản đã tồn tại'});
@@ -32,7 +32,7 @@ router.post('/register', function (req, res) {
                 password: password,
             },
             function (error, results, fields) {
-                if (error) throw error;
+                if (error) { res.send(err.UNKNOWN); return;};
                 res.send({code: 0, message: 'Thành công'});
             });
 

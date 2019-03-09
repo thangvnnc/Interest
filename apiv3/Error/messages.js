@@ -1,7 +1,8 @@
 class Messages {
-    constructor(code, message) {
+    constructor(code, message, detail) {
         this.code = code;
         this.message = message;
+        this.detail = detail;
     }
 }
 

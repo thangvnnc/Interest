@@ -3,6 +3,16 @@ const express = require('express');
 const app = express();
 const port = 8118;
 const bodyParser = require('body-parser');
+const session = require('express-session');
+
+app.set('trust proxy', 1);
+app.use(session({
+    secret: 'abcXYZ',
+    cookie: { maxAge: 60000 },
+    resave: true,
+    saveUninitialized: true
+}));
+
 // const api = require('./api/index');
 // const apiv2 = require('./apiv2/index');
 const apiv3 = require('./apiv3/index');

@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
-const Errors = require('./errors');
+const Errors = require('../Error/errors');
 const err = new Errors();
 
 router.post('/support', function (req, res) {
@@ -13,7 +13,7 @@ router.post('/support', function (req, res) {
     }
 
     connection.query('INSERT INTO support SET ?', {content: content}, function (error, results, fields) {
-        if (error) throw error;
+        if (error) { res.send(err.UNKNOWN); return;};
         res.send(err.OK);
     });
 });
@@ -27,14 +27,14 @@ router.post('/device/android', function (req, res) {
     }
 
     connection.query('SELECT * FROM device WHERE ?', {android_id: androidId}, function (error, results, fields) {
-        if (error) throw error;
+        if (error) { res.send(err.UNKNOWN); return;};
 
         if (results.length !== 0) {
             res.send(err.OK);
             return;
         }
         connection.query('INSERT INTO device SET ?', {android_id: androidId}, function (error, results, fields) {
-            if (error) throw error;
+            if (error) { res.send(err.UNKNOWN); return;};
             res.send(err.OK);
         });
     });
@@ -49,14 +49,14 @@ router.post('/admod', function (req, res) {
     }
 
     connection.query('SELECT * FROM admod WHERE ?', {device_id: deviceId}, function (error, results, fields) {
-        if (error) throw error;
+        if (error) { res.send(err.UNKNOWN); return;};
 
         if (results.length === 0) {
             connection.query('INSERT INTO admod SET ?', {
                 device_id: deviceId,
                 count: 1
             }, function (error, results, fields) {
-                if (error) throw error;
+                if (error) { res.send(err.UNKNOWN); return;};
                 res.send(err.OK);
             });
         }
@@ -64,7 +64,7 @@ router.post('/admod', function (req, res) {
             let count = results[0].count;
             count++;
             connection.query('UPDATE admod SET ? WHERE ?', [{count: count}, {device_id: deviceId}], function (error, results, fields) {
-                if (error) throw error;
+                if (error) { res.send(err.UNKNOWN); return;};
                 res.send(err.OK);
             });
         }
