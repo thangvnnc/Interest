@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const router = express.Router();
+const Errors = require('./errors');
 const err = new Errors();
 
 router.post('/support', function (req, res) {
